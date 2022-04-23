@@ -4,11 +4,26 @@ import { Manager } from "./manager.js";
 import { Settings } from "./settings.js";
 import { Logs } from "./logs.js";
 
+/*
+The PomodoroTimer class uses 4 others classes, which are linked together with the PomodoroTimer class
+Here is a diagram:
+
+             +-----------------------+
+             |     PomodoroTimer     |
+             +-----------------------+
+            /     |             |     \
+           /      |             |      \
+          /       |             |       \
+         /        |             |        \
++-------+    +---------+  +----------+    +------+
+| Timer |    | Manager |  | Settings |    | Logs |
++-------+    +---------+  +----------+    +------+
+*/
 export class PomodoroTimer {
 
    constructor(mainDivEl) {
       this._mainDivEl = mainDivEl;
-      this._mainDivEl.innerHTML = "";
+      this._mainDivEl.innerHTML = ""; //Remove the loading label
 
       //Local storage first init
       if (localStorage.curProgress == null || localStorage.pomodoroCount == null
@@ -36,7 +51,7 @@ export class PomodoroTimer {
       this.initPomoroProgressInterface();
       this.initTabsInterface();
 
-      // Compute additional parameters
+      // Compute additional parameters from localstorage
       let tmpProgress = localStorage.curProgress;
       localStorage.curProgress = 0;
       this.addProgressTime(tmpProgress);
@@ -50,7 +65,7 @@ export class PomodoroTimer {
       this._Logs.initInterface(this._tabDivs[3]);
       this.fullInterfaceUpdate();
 
-      //Enable notifications
+      //Request notifications
       if (("Notification" in window) && Notification.permission == "default") {
          Notification.requestPermission();
       }
@@ -62,7 +77,7 @@ export class PomodoroTimer {
          console.log("Offline")
       }
 
-      //Finish
+      //Log succesful load
       this.logEvent(LoggingEvents.AppLoad);
       //this.createDummyEvents();
    }
@@ -82,10 +97,8 @@ export class PomodoroTimer {
 
       //Daily goal progress bar (div + progress)
       let pomodoroProgressDiv = document.createElement("div");
-      pomodoroProgressDiv.classList.add("prog-cent-div");
+      pomodoroProgressDiv.classList.add("cent-div");
       this._pomodoroMeterEl = document.createElement("meter");
-      this._pomodoroMeterEl.value = 0;
-      this._pomodoroMeterEl.classList.add("mid");
       pomodoroProgressDiv.appendChild(this._pomodoroMeterEl);
       this._mainDivEl.appendChild(pomodoroProgressDiv);
    }
@@ -113,12 +126,7 @@ export class PomodoroTimer {
       //History API
       history.replaceState({ tab: "Timer" }, null, "#Timer");
       window.addEventListener('popstate', function (e) {
-         switch (e.state.tab) {
-            case "Timer": radios[0].checked = "checked"; break;
-            case "Manager": radios[1].checked = "checked"; break;
-            case "Settings": radios[2].checked = "checked"; break;
-            case "Logs": radios[3].checked = "checked"; break;
-         }
+         radios[tabNames.indexOf(e.state.tab)].checked = "checked";
       });
 
       //Creating the tab labels
@@ -166,7 +174,7 @@ export class PomodoroTimer {
    //Progress arithmetic
 
    addProgressTime(amount) {
-      if (amount == 0) return;
+      if (amount <= 0) return;
       localStorage.curProgress = Number(localStorage.curProgress) + Number(amount);
       let maxVal = localStorage.pomodoroCount * localStorage.pomodoroLen;
       if (localStorage.curProgress >= maxVal) {
@@ -181,7 +189,7 @@ export class PomodoroTimer {
    }
 
    removeProgressTime(amount) {
-      if (amount == 0) return;
+      if (amount <= 0) return;
       localStorage.curProgress = Number(localStorage.curProgress) - Number(amount);
       this._pomodoroMeterEl.classList.remove("gold");
       if (localStorage.curProgress < 0) {

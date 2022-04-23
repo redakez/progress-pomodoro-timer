@@ -8,7 +8,7 @@ export class Manager {
 
    initInterface(managerDivEl) {
       let timeDivEl = document.createElement("div");
-      timeDivEl.classList.add("btn-cent-div")
+      timeDivEl.classList.add("cent-div")
 
       let minuteLabelEl = document.createElement("label");
       minuteLabelEl.textContent = "Time (min):";
@@ -19,15 +19,13 @@ export class Manager {
       managerDivEl.appendChild(timeDivEl);
 
       let btnsDivEl = document.createElement("div");
-      btnsDivEl.classList.add("btn-cent-div")
+      btnsDivEl.classList.add("cent-div")
 
       let addButtonEl = document.createElement("button");
       addButtonEl.textContent = "Add";
-      addButtonEl.classList.add("timer-btn")
       addButtonEl.addEventListener("click", this.addButtonAction.bind(this));
       let removeButtonEl = document.createElement("button");
       removeButtonEl.textContent = "Remove";
-      removeButtonEl.classList.add("timer-btn")
       removeButtonEl.addEventListener("click", this.removeButtonAction.bind(this));
       btnsDivEl.appendChild(addButtonEl);
       btnsDivEl.appendChild(removeButtonEl);

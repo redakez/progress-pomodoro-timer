@@ -19,22 +19,20 @@ export class Timer {
    initInterface(timerDivEl) {
       //Timer label
       this._timeLabelEl = document.createElement("label");
-      this._timeLabelEl.classList.add("extra-top");
       this._timeLabelEl.classList.add("text-center");
       timerDivEl.appendChild(this._timeLabelEl);
 
       //Timer progress bar
       let progressDiv = document.createElement("div");
-      progressDiv.classList.add("prog-cent-div");
+      progressDiv.classList.add("cent-div");
       this._timerMeterEl = document.createElement("meter");
       this._timerMeterEl.value = 0;
-      this._timerMeterEl.classList.add("mid");
       progressDiv.appendChild(this._timerMeterEl);
       timerDivEl.appendChild(progressDiv);
 
       //Buttons
       let buttonDiv = document.createElement("div");
-      buttonDiv.classList.add("btn-cent-div");
+      buttonDiv.classList.add("cent-div");
 
       this._startButtonEl = this.getButton("Start", false, (e) => this.startButtonAction());
       buttonDiv.appendChild(this._startButtonEl);
@@ -51,7 +49,6 @@ export class Timer {
    getButton(name, hidden, action) {
       let ret = document.createElement("button");
       ret.textContent = name;
-      ret.classList.add("timer-btn");
       ret.addEventListener("click", action);
       if (hidden) {
          ret.style.display = "none";
@@ -142,10 +139,10 @@ export class Timer {
 
    updateButtonsVisibilityTo(startVal, pauseVal, resumeVal, finishVal) {
       let displVal = "inline-block";
-      startVal ? this._startButtonEl.style.display = displVal : this._startButtonEl.style.display = "none";
-      pauseVal ? this._pauseButtonEl.style.display = displVal : this._pauseButtonEl.style.display = "none";
-      resumeVal ? this._resumeButtonEl.style.display = displVal : this._resumeButtonEl.style.display = "none";
-      finishVal ? this._finishButtonEl.style.display = displVal : this._finishButtonEl.style.display = "none";
+      this._startButtonEl.style.display = startVal ? displVal : "none";
+      this._pauseButtonEl.style.display = pauseVal ? displVal : "none";
+      this._resumeButtonEl.style.display = resumeVal ? displVal : "none";
+      this._finishButtonEl.style.display = finishVal ? displVal : "none";
    }
 
    localUiUpdate() {

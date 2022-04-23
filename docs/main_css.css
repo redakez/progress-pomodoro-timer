@@ -1,18 +1,16 @@
 /* -------------------- Global variables -------------------- */
 
 :root {
-   /* Colors */
    --main-app-background-color: #150050;
    --tabbed-background-color: #540081;
    --border-color: #390068;
    --main-background-color: #000;
-   --meter-background-color: gray;
+   --meter-background-color: lightgray;
    --meter-progress-color: lightgreen;
-   --meter-full-color: gold;
    --text-color: white;
 }
 
-/* -------------------- Main pomodoro website stuff -------------------- */
+/* -------------------- Global rules across all pages -------------------- */
 
 body {
    background-color: var(--main-background-color);
@@ -57,7 +55,7 @@ h1 {
    flex-grow: 1;
 }
 
-/* -------------------- Div types based on page -------------------- */
+/* -------------------- Rules for About and Guide pages -------------------- */
 
 .page-div {
    width: 300px;
@@ -81,16 +79,44 @@ h1 {
    }
  }
 
-/* -------------------- Main pomodoro, Timer, Manager and Settings stuff -------------------- */
+/* -------------------- General main page css -------------------- */
+
+input {
+   margin-left: 10px;
+   width: 50px;
+   border: none;
+   line-height: 2;
+}
+
+.cent-div {
+   text-align: center;
+   position: relative;
+   padding-bottom: 10px;
+   width: 260px;
+   margin: 0 auto;
+}
+
+button {
+   width: 100px;
+   margin: 0px 2px;
+   border: none;
+   height: 26px;
+   color: var(--text-color);
+   background-color: var(--main-app-background-color);
+   cursor: pointer;
+}
+
+button:hover {
+   background-color: var(--border-color);
+}
+
+/* -------------------- Meter -------------------- */
 
 meter {
-   /*appearance: none;*/
-   /*-moz-appearance: meter;*/
-   /*-webkit-appearance: meter;*/
    height: 14px;
    width: 260px;
    background: var(--meter-background-color);
-   background-color : white;
+   background-color : var(--meter-background-color);
    transform: scale(0.9);
 }
 
@@ -98,26 +124,9 @@ meter::-webkit-meter-bar {
    border-radius: 0px;
    border: none;
    height: 14px;
-   background-color: white;
-   color: white;
+   background-color: var(--meter-background-color);
+   color: var(--meter-background-color);
 }
-
-/*
-meter::-webkit-meter-inner-element {
-   background-color: red;
-   color: red;
-}
-
-meter::-webkit-meter-bar {
-   background-color: blue;
-   color: blue;
-}
-
-meter::-webkit-meter-suboptimum-value {
-   background-color: greenyellow;
-   color: greenyellow;
-}
-*/
 
 meter::-webkit-meter-optimum-value { /* Dont merge this with the rule below */
    background: var(--meter-progress-color);
@@ -127,13 +136,12 @@ meter::-moz-meter-bar { /* Dont merge this with the rule above */
    background: var(--meter-progress-color);
 }
 
-meter.gold::-webkit-meter-optimum-value { /* Dont merge this with the rule below */
+meter.gold::-webkit-meter-optimum-value {
    background: linear-gradient(90deg, rgb(255, 255, 0), rgb(170, 170, 0), rgb(255, 255, 0));
-   /*animation and transform not supported? */
-
+   /* animation and transform is probably not supported for meter outside of firefox */
 }
 
-meter.gold::-moz-meter-bar { /* Dont merge this with the rule above */
+meter.gold::-moz-meter-bar {
    background: linear-gradient(90deg, rgb(255, 255, 0), rgb(170, 170, 0), rgb(255, 255, 0));
    background-size: 50% 50%;
 
@@ -145,63 +153,8 @@ meter.gold::-moz-meter-bar { /* Dont merge this with the rule above */
    0%{background-position:0% 0%}
    100%{background-position:100% 0%}
 }
-@-webkit-keyframes GoldAnim {
-   0%{background-position:0% 0%}
-   100%{background-position:100% 0%}
-}
-@-o-keyframes GoldAnim {
-   0%{background-position:0% 0%}
-   100%{background-position:100% 0%}
-}
-@-ms-keyframes GoldAnim {
-   0%{background-position:0% 0%}
-   100%{background-position:100% 0%}
-}
-@-moz-keyframes GoldAnim {
-   0%{background-position:0% 0%}
-   100%{background-position:100% 0%}
-}
 
-
-input {
-   margin-left: 10px;
-   width: 50px;
-   border: none;
-   line-height: 2;
-}
-
-.prog-cent-div {
-   position: relative;
-   padding-bottom: 10px;
-   width: 260px;
-   margin: 0 auto;
-}
-
-.btn-cent-div {
-   text-align: center;
-   position: relative;
-   padding-top: 4px;
-   padding-bottom: 10px;
-   width: 260px;
-   margin: 0 auto;
-}
-
-button.timer-btn { /* TODO remove this and make it just button */
-   width: 100px;
-   margin: 0px 2px;
-   border: none;
-   height: 26px;
-   color: var(--text-color);
-   background-color: var(--main-app-background-color);
-   cursor: pointer;
-}
-
-button.timer-btn:hover { /* TODO remove this and make it just button */
-   background-color: var(--border-color);
-}
-
-
-/* -------------------- Logs -------------------- */
+/* -------------------- Log table + Progress graph -------------------- */
 
 table {
    width: 300px;

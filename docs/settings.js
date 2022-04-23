@@ -11,10 +11,10 @@ export class Settings {
    initInterface(managerDivEl) {
       //Pomodoro count input
       let pomCountDivEl = document.createElement("div");
-      pomCountDivEl.classList.add("btn-cent-div")
+      pomCountDivEl.classList.add("cent-div")
 
       let pomCountLabelEl = document.createElement("label");
-      pomCountLabelEl.textContent = "Pomodoro count:";
+      pomCountLabelEl.textContent = "Pomodoro count (min):";
       this._pomCountInputEl = document.createElement("input");
       pomCountDivEl.appendChild(pomCountLabelEl);
       pomCountDivEl.appendChild(this._pomCountInputEl);
@@ -23,10 +23,10 @@ export class Settings {
 
       //Pomodoro length input
       let pomLenDivEl = document.createElement("div");
-      pomLenDivEl.classList.add("btn-cent-div")
+      pomLenDivEl.classList.add("cent-div")
 
       let pomLenLabelEl = document.createElement("label");
-      pomLenLabelEl.textContent = "Pomodoro length:";
+      pomLenLabelEl.textContent = "Pomodoro length (min):";
       this._pomLenInputEl = document.createElement("input");
       pomLenDivEl.appendChild(pomLenLabelEl);
       pomLenDivEl.appendChild(this._pomLenInputEl);
@@ -35,11 +35,10 @@ export class Settings {
 
       //Confirm button
       let buttonDivEL = document.createElement("div");
-      buttonDivEL.classList.add("btn-cent-div")
+      buttonDivEL.classList.add("cent-div")
 
       let confirmButtonEl = document.createElement("button");
       confirmButtonEl.textContent = "Apply";
-      confirmButtonEl.classList.add("timer-btn")
       confirmButtonEl.addEventListener("click", e => this.applySettings());
       buttonDivEL.appendChild(confirmButtonEl);
 
@@ -47,6 +46,7 @@ export class Settings {
    }
 
    applySettings() {
+      //Try to read the label info
       let newPomodorCount = readIntFromLabel(this._pomCountInputEl);
       if (newPomodorCount == null) {
          return;
@@ -55,6 +55,7 @@ export class Settings {
       if (newPomodorLen == null) {
          return;
       }
+      //If the format is correct, apply the settings
       let progressSave = localStorage.curProgress;
       this.PT.removeProgressTime(progressSave);
       localStorage.pomodoroCount = newPomodorCount;

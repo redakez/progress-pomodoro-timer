@@ -56,7 +56,7 @@ export class Logs {
 
       let fullOffset = this._mainOffset + this._sideOffset;
 
-      //Main path
+      //Main progress path
       let fullPath = "M";
       for (let i = 0; i < this._records.length; i++) {
          let thisRec = this._records[i];
@@ -71,15 +71,17 @@ export class Logs {
       this._svgGraph.innerHTML += `<line x1="${this._mainOffset - this._tickLength}" y1="${this._svgGraphYSize - this._mainOffset}"
             x2="${this._svgGraphXSize}" y2="${this._svgGraphYSize - this._mainOffset}" stroke="white" stroke-width="2" />`; //Horizontal line + tick
       this._svgGraph.innerHTML += `<line x1="${this._mainOffset}" y1="0" x2="${this._mainOffset}"
-            y2="${this._svgGraphYSize - this._mainOffset}" stroke="white" stroke-width="2" />`; //Vertical line (no ticks)
+            y2="${this._svgGraphYSize - this._mainOffset}" stroke="white" stroke-width="2" />`; //Vertical line (no tick)
 
       //X axis text + ticks
       let minXVal = this._mainOffset;
       let maxXVal = this._svgGraphXSize - this._sideOffset;
       let numberOfTimeTicks = 4;
       for (let xVal = minXVal; xVal <= maxXVal; xVal += (maxXVal - this._mainOffset) / numberOfTimeTicks) {
+         //Tick
          this._svgGraph.innerHTML += `<line x1="${xVal}" y1="${this._svgGraphYSize - this._mainOffset}
                " x2="${xVal}" y2="${this._svgGraphYSize - this._mainOffset + this._tickLength}" stroke="white" stroke-width="2" />`;
+         //Tick label
          let time = Math.floor(timeShift + (maxTime * ((xVal - minXVal) / (maxXVal - minXVal))));
          this._svgGraph.innerHTML += `<text x="${Math.min(maxXVal - this._textOffset - 12, xVal - this._textOffset)}
                " y="${this._svgGraphYSize - this._mainOffset + this._tickLength + 15}" class="svgText">${getTimeFormatted_M_H(time)}</text>`;
