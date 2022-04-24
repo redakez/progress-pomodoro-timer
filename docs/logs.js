@@ -1,4 +1,4 @@
-import { getTimeFormatted_S_H, getTimeFormatted_Ms_M, getTimeFormatted_M_H } from "./utils.js";
+import { getTimeFormatted_S_H, getTimeFormatted_adaptive, getTimeFormatted_M_H } from "./utils.js";
 
 export class Logs {
 
@@ -42,7 +42,7 @@ export class Logs {
       let headerPart = this._table.innerHTML.substring(0, this._headerSize);
       let newRecordPart = "<tr><td>" + getTimeFormatted_S_H(time) +
          "</td><td>" + newEvent.event +
-         "</td><td>" + getTimeFormatted_Ms_M(newEvent.progress) + "</td></tr>";
+         "</td><td>" + getTimeFormatted_adaptive(newEvent.progress) + "</td></tr>";
       let oldRecordsPart = this._table.innerHTML.substring(this._headerSize, this._table.innerHTML.length)
       this._table.innerHTML = headerPart + newRecordPart + oldRecordsPart;
       this.updateGraph();
@@ -57,15 +57,18 @@ export class Logs {
       let fullOffset = this._mainOffset + this._sideOffset;
 
       //Main progress path
-      let fullPath = "M";
-      for (let i = 0; i < this._records.length; i++) {
-         let thisRec = this._records[i];
-         let actualX = (((thisRec.time - timeShift) / maxTime) * (this._svgGraphXSize - fullOffset)) + this._mainOffset;
-         let actualY = - ((thisRec.progress / maxVal) * (this._svgGraphYSize - fullOffset)) + (this._svgGraphYSize - this._mainOffset);
-         fullPath += actualX + " " + actualY + " L ";
+      if (this._records.length > 1) {
+         let fullPath = "M";
+         for (let i = 0; i < this._records.length; i++) {
+            let thisRec = this._records[i];
+            let actualX = (((thisRec.time - timeShift) / maxTime) * (this._svgGraphXSize - fullOffset)) + this._mainOffset;
+            let actualY = - ((thisRec.progress / maxVal) * (this._svgGraphYSize - fullOffset)) + (this._svgGraphYSize - this._mainOffset);
+            fullPath += actualX + " " + actualY + " L ";
+         }
+         fullPath = fullPath.substring(0, fullPath.length - 2);
+         this._svgGraph.innerHTML += `<path d="${fullPath}" fill="none" stroke="lightgreen" stroke-width="3" />`; //Main progress Line
       }
-      fullPath = fullPath.substring(0, fullPath.length - 2);
-      this._svgGraph.innerHTML += `<path d="${fullPath}" fill="none" stroke="lightgreen" stroke-width="3" />`; //Main progress Line
+
 
       //Axes
       this._svgGraph.innerHTML += `<line x1="${this._mainOffset - this._tickLength}" y1="${this._svgGraphYSize - this._mainOffset}"

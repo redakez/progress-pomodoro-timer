@@ -81,7 +81,7 @@ h1 {
 
 /* -------------------- General main page css -------------------- */
 
-input {
+input[type=text] {
    margin-left: 10px;
    width: 50px;
    border: none;
@@ -89,8 +89,8 @@ input {
 }
 
 .cent-div {
-   text-align: center;
-   position: relative;
+   display: flex;
+   justify-content: center;
    padding-bottom: 10px;
    width: 260px;
    margin: 0 auto;

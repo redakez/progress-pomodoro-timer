@@ -1,4 +1,4 @@
-import { StateEnum, getTimeFormatted_Ms_M, LoggingEvents } from "./utils.js";
+import { StateEnum, getTimeFormatted_adaptive, LoggingEvents } from "./utils.js";
 import { Timer } from "./timer.js";
 import { Manager } from "./manager.js";
 import { Settings } from "./settings.js";
@@ -32,6 +32,7 @@ export class PomodoroTimer {
          localStorage.pomodoroCount = 8;
          localStorage.pomodoroLen = 30 * 1000 * 60; //30 minutes
          localStorage.lastProgressUpdate = Date.now();
+         localStorage.notifOn = 0;
       }
 
       //Removing old progress if a certain amount of time passed
@@ -65,17 +66,17 @@ export class PomodoroTimer {
       this._Logs.initInterface(this._tabDivs[3]);
       this.fullInterfaceUpdate();
 
-      //Request notifications
-      if (("Notification" in window) && Notification.permission == "default") {
-         Notification.requestPermission();
-      }
-
       //Offline stuff
       if (navigator.onLine) {
          console.log("Online")
       } else {
          console.log("Offline")
       }
+
+      //Event listener for window close
+      window.addEventListener("beforeunload", (e) => {
+         this.addProgressTime(this._Timer.getCurTimerTime());
+      });
 
       //Log succesful load
       this.logEvent(LoggingEvents.AppLoad);
@@ -166,7 +167,7 @@ export class PomodoroTimer {
       let curPomodoro = Math.floor(localStorage.curProgress / localStorage.pomodoroLen);
       let extraTime = localStorage.curProgress % localStorage.pomodoroLen;
       this._pomodoroLabel.innerText = "Pomodoro: " + curPomodoro + " / " + localStorage.pomodoroCount;
-      this._extraTimeLabelEl.innerText = "Extra time: " + getTimeFormatted_Ms_M(extraTime);
+      this._extraTimeLabelEl.innerText = "Extra time: " + getTimeFormatted_adaptive(extraTime);
       this._pomodoroMeterEl.value = localStorage.curProgress;
       this._pomodoroMeterEl.max = localStorage.pomodoroCount * localStorage.pomodoroLen;
    }

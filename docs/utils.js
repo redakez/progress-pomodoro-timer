@@ -29,6 +29,21 @@ function getNumberZeroPadded(number, amount) {
    return String(number).padStart(amount, '0');
 }
 
+export function getTimeFormatted_adaptive(timeMs) {
+   let theTime = new Date(Number(timeMs));
+   let hours = Math.floor(timeMs / (1000 * 60 * 60));
+   let minutes = theTime.getMinutes();
+   let seconds = theTime.getSeconds();
+   let milliSeconds = theTime.getMilliseconds();
+
+   let ret = "";
+   if (hours != 0) {
+      ret += getNumberZeroPadded(hours, 2) + ":";
+   }
+   ret += getNumberZeroPadded(minutes, 2) + ":" + getNumberZeroPadded(seconds, 2) + "." + getNumberZeroPadded(milliSeconds, 3);
+   return ret;
+}
+
 export function getTimeFormatted_M_H(timeMs) {
    let theTime = new Date(Number(timeMs));
    return getNumberZeroPadded(theTime.getHours(), 2) + ":" +

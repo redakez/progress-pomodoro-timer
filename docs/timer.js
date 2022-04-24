@@ -1,4 +1,4 @@
-import { StateEnum, getTimeFormatted_Ms_M, LoggingEvents, iconBase64 } from "./utils.js";
+import { StateEnum, getTimeFormatted_adaptive, LoggingEvents, iconBase64 } from "./utils.js";
 
 export class Timer {
 
@@ -88,7 +88,7 @@ export class Timer {
       } else {
          timeMax = localStorage.pomodoroLen;
       }
-      this._timeLabelEl.innerText = getTimeFormatted_Ms_M(Math.min(timeMs, timeMax)) + " / " + getTimeFormatted_Ms_M(timeMax);
+      this._timeLabelEl.innerText = getTimeFormatted_adaptive(Math.min(timeMs, timeMax)) + " / " + getTimeFormatted_adaptive(timeMax);
       this._timerMeterEl.value = timeMs;
       if (this.PT._state == StateEnum.DONE) {
          this._timerMeterEl.max = 1;
@@ -155,7 +155,7 @@ export class Timer {
    timerFinishedNotification() {
       if (!("Notification" in window)) {
          return;
-      } else if (Notification.permission == "granted") {
+      } else if (Notification.permission == "granted" && localStorage.notifOn == 1) {
          let notif = new Notification("Pomodoro finished! Click here to confirm pomodoro end", { icon: iconBase64 });
          notif.onclick = () => this.finishButtonAction();
       }

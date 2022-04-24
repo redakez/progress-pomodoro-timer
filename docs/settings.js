@@ -14,8 +14,9 @@ export class Settings {
       pomCountDivEl.classList.add("cent-div")
 
       let pomCountLabelEl = document.createElement("label");
-      pomCountLabelEl.textContent = "Pomodoro count (min):";
+      pomCountLabelEl.textContent = "Pomodoro count:";
       this._pomCountInputEl = document.createElement("input");
+      this._pomCountInputEl.type = "text";
       pomCountDivEl.appendChild(pomCountLabelEl);
       pomCountDivEl.appendChild(this._pomCountInputEl);
 
@@ -28,6 +29,7 @@ export class Settings {
       let pomLenLabelEl = document.createElement("label");
       pomLenLabelEl.textContent = "Pomodoro length (min):";
       this._pomLenInputEl = document.createElement("input");
+      this._pomLenInputEl.type = "text";
       pomLenDivEl.appendChild(pomLenLabelEl);
       pomLenDivEl.appendChild(this._pomLenInputEl);
 
@@ -43,6 +45,27 @@ export class Settings {
       buttonDivEL.appendChild(confirmButtonEl);
 
       managerDivEl.appendChild(buttonDivEL);
+
+      //Break
+      managerDivEl.appendChild(document.createElement("br"));
+
+      //Notifications tickbox
+      let checkboxDivEL = document.createElement("div");
+      checkboxDivEL.classList.add("cent-div")
+
+      this._checkboxEl = document.createElement("input");
+      this._checkboxEl.type = "checkbox";
+      this._checkboxEl.id = "notifCheckbox";
+      this._checkboxEl.checked = localStorage.notifOn == 1;
+      this._checkboxEl.addEventListener("click", (e) => this.checkboxAction(e), false);
+      checkboxDivEL.appendChild(this._checkboxEl);
+
+      let labelEL = document.createElement("label");
+      labelEL.textContent = "Desktop notifications";
+      labelEL.setAttribute("for", "notifCheckbox");
+      checkboxDivEL.appendChild(labelEL);
+
+      managerDivEl.appendChild(checkboxDivEL);
    }
 
    applySettings() {
@@ -64,5 +87,43 @@ export class Settings {
       this.PT.fullInterfaceUpdate();
       this.PT.logEvent(LoggingEvents.SettingsChanged);
    }
+
+   checkboxAction(e) {
+      //If the permision has no been granted, then prevent defaults... (how about that genies?)
+      console.log("Cur perm: " + Notification.permission + ", " + "cur localstorage: " + localStorage.notifOn)
+
+      if (Notification.permission == "granted") {
+         localStorage.notifOn = this._checkboxEl.checked ? 1 : 0;
+         console.log("Storage notif set to :" + localStorage.notifOn)
+         return;
+      }
+      e.preventDefault();
+
+      //Request notifications
+      if (!("Notification" in window)) {
+         alert("Your browser does not support desktop notifications.");
+      } else if (Notification.permission == "denied") {
+         alert("Desktop notificitaions have been previously disabled for this site and have to be reenabled manually in your browser.");
+      } else if (Notification.permission == "default") {
+         Notification.requestPermission().then(function (perm) {
+            if (perm == "granted") {
+               localStorage.notifOn = 1;
+               this._checkboxEl.checked = true;
+            }
+         }.bind(this));
+      }
+   }
+
+   /*
+   switchCheckbox() {
+      if (localStorage.notifOn == 1) {
+         localStorage.notifOn = 0;
+      } else {
+         localStorage.notifOn = 1;
+      }
+      console.log("Storage notif set to :" + localStorage.notifOn)
+      //this.updateCheckboxChecked();
+   }
+   */
 
 }

@@ -13,6 +13,7 @@ export class Manager {
       let minuteLabelEl = document.createElement("label");
       minuteLabelEl.textContent = "Time (min):";
       this._minuteInputEL = document.createElement("input");
+      this._minuteInputEL.type = "text";
       timeDivEl.appendChild(minuteLabelEl);
       timeDivEl.appendChild(this._minuteInputEL);
 
@@ -34,15 +35,21 @@ export class Manager {
    }
 
    addButtonAction() {
-      this.PT.addProgressTime((readIntFromLabel(this._minuteInputEL) ?? 0) * 1000 * 60);
-      this.PT.fullInterfaceUpdate();
-      this.PT.logEvent(LoggingEvents.AddTime);
+      let val = readIntFromLabel(this._minuteInputEL);
+      if (val != null) {
+         this.PT.addProgressTime(val * 1000 * 60);
+         this.PT.fullInterfaceUpdate();
+         this.PT.logEvent(LoggingEvents.AddTime);
+      }
    }
 
    removeButtonAction() {
-      this.PT.removeProgressTime((readIntFromLabel(this._minuteInputEL) ?? 0) * 1000 * 60)
-      this.PT.fullInterfaceUpdate();
-      this.PT.logEvent(LoggingEvents.RemoveTime);
+      let val = readIntFromLabel(this._minuteInputEL);
+      if (val != null) {
+         this.PT.removeProgressTime(val * 1000 * 60);
+         this.PT.fullInterfaceUpdate();
+         this.PT.logEvent(LoggingEvents.AddTime);
+      }
    }
 
 }
