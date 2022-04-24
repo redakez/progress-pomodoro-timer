@@ -89,12 +89,8 @@ export class Settings {
    }
 
    checkboxAction(e) {
-      //If the permision has no been granted, then prevent defaults... (how about that genies?)
-      console.log("Cur perm: " + Notification.permission + ", " + "cur localstorage: " + localStorage.notifOn)
-
       if (Notification.permission == "granted") {
          localStorage.notifOn = this._checkboxEl.checked ? 1 : 0;
-         console.log("Storage notif set to :" + localStorage.notifOn)
          return;
       }
       e.preventDefault();
@@ -113,17 +109,5 @@ export class Settings {
          }.bind(this));
       }
    }
-
-   /*
-   switchCheckbox() {
-      if (localStorage.notifOn == 1) {
-         localStorage.notifOn = 0;
-      } else {
-         localStorage.notifOn = 1;
-      }
-      console.log("Storage notif set to :" + localStorage.notifOn)
-      //this.updateCheckboxChecked();
-   }
-   */
 
 }
