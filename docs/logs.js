@@ -1,4 +1,4 @@
-import { getTimeFormatted_S_H, getTimeFormatted_adaptive, getTimeFormatted_M_H } from "./utils.js";
+import { LoggingEvents, getTimeFormatted_S_H, getTimeFormatted_M_H_adaptive, getTimeFormatted_M_H } from "./utils.js";
 
 export class Logs {
 
@@ -12,6 +12,21 @@ export class Logs {
    initInterface(logsDivEl) {
       let tableDivEl = document.createElement("div");
       tableDivEl.classList.add("table-div");
+
+      // Buttons (Clear records + save records)
+      let btnsDivEl = document.createElement("div");
+      btnsDivEl.classList.add("cent-div")
+
+      let clearButtonEl = document.createElement("button");
+      clearButtonEl.textContent = "Clear";
+      clearButtonEl.addEventListener("click", this.clearRecordsAction.bind(this));
+      let saveButtonEl = document.createElement("button");
+      saveButtonEl.textContent = "Save";
+      saveButtonEl.addEventListener("click", this.saveRecordsToFileAction.bind(this));
+      btnsDivEl.appendChild(clearButtonEl);
+      btnsDivEl.appendChild(saveButtonEl);
+
+      logsDivEl.appendChild(btnsDivEl);
 
       //SVG graph
       this._svgGraph = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -29,23 +44,67 @@ export class Logs {
 
       //Table
       this._table = document.createElement("table");
-      this._table.innerHTML = "<thead><tr><th>Time</th><th>Action</th><th>Progress</th></tr></thead><tbody></tbody>";
-      this._headerSize = this._table.innerHTML.length - "</tbody>".length;
 
       tableDivEl.appendChild(this._table);
       logsDivEl.appendChild(tableDivEl);
    }
 
-   addRecord(time, type, progress) {
-      let newEvent = { time: time, event: type, progress: progress };
-      this._records.push(newEvent);
-      let headerPart = this._table.innerHTML.substring(0, this._headerSize);
-      let newRecordPart = "<tr><td>" + getTimeFormatted_S_H(time) +
-         "</td><td>" + newEvent.event +
-         "</td><td>" + getTimeFormatted_adaptive(newEvent.progress) + "</td></tr>";
-      let oldRecordsPart = this._table.innerHTML.substring(this._headerSize, this._table.innerHTML.length)
-      this._table.innerHTML = headerPart + newRecordPart + oldRecordsPart;
+   clearRecordsAction() {
+      let res = confirm("Are you sure you want to clear today's records?")
+      if (res) {
+         this._records = [];
+         this.PT.logEvent(LoggingEvents.RecordsClear);
+      }
+   }
+
+   saveRecordsToFileAction() {
+      let fileContent = [];
+      fileContent.push("Timestamp,Action,Progress [ms]\n");
+      for (let record of this._records) {
+         fileContent.push(record.time + "," + record.event + "," + record.progress + "\n");
+      }
+      let file = new Blob([fileContent.join("")], { type: "text/csv" });
+      let a = document.createElement("a")
+      let url = URL.createObjectURL(file);
+      a.href = url;
+      a.download = "progress_pomodoro_timer_records_" + Date.now() + ".csv";
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(e => {
+         document.body.removeChild(a);
+         window.URL.revokeObjectURL(url);
+      }, 0);
+   }
+
+   loadFromLocalStorage() {
+      if (localStorage.records != null) {
+         this._records = JSON.parse(localStorage.records);
+      }
+   }
+
+   saveToLocalStorage() {
+      localStorage.records = JSON.stringify(this._records);
+   }
+
+   localUiUpdate() {
+      this.updateTable();
       this.updateGraph();
+   }
+
+   addRecord(time, type, progress) {
+      this._records.push({ time: time, event: type, progress: progress });
+      this.localUiUpdate();
+   }
+
+   updateTable() {
+      let finalInnerHtml = "<thead><tr><th>Time</th><th>Action</th><th>Progress</th></tr></thead><tbody>";
+      for (let record of this._records) {
+         finalInnerHtml += "<tr><td>" + getTimeFormatted_S_H(record.time) +
+            "</td><td>" + record.event +
+            "</td><td>" + getTimeFormatted_M_H_adaptive(record.progress) + "</td></tr>";
+      }
+      finalInnerHtml += "</tbody>";
+      this._table.innerHTML = finalInnerHtml;
    }
 
    updateGraph() {
@@ -99,4 +158,3 @@ export class Logs {
    }
 
 }
-

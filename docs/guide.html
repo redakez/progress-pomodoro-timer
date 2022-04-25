@@ -19,22 +19,55 @@
          <a href="./guide.html">Guide</a>
          <a href="./about.html">About</a>
       </nav>
-      <div class="inner-text-div">
+      <article class="inner-text-div">
+         <h2>Application description</h2>
          <p>
-            Progress Pomodoro Timer uses <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">pomodoro
-               technique</a> while keeping track of completed pomodoros. You can set a daily goal in the "Settings" tab,
-            where the number of pomodoros and their length can be set.
+            Progress Pomodoro Timer uses the <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">pomodoro
+               technique</a> while while keeping a track of your daily goal.
+         </p>
+         <h2>How to use</h2>
+         <p>First you need to set up your daily goal, which is the total time you plan to spent working each day. This
+            is
+            done by setting the number of pomodoros and their length in the Settings tab. Usual pomodoro length is 20-30
+            minutes. The daily goal is calculated as pomodoro length multiplied by the number of pomodoros. Once you set
+            your goal, follow these steps every day (or only some days):</p>
+         <ol>
+            <li>Start a pomodoro in the Timer tab and work until the pomodoro is completed</li>
+            <li>Take a 5-15 minute break</li>
+            <li>If your daily goal is not yet met, go to step 1, otherwise you are done working for today</li>
+         </ol>
+         <p>
+            Feel free to experiment with the length of the pomodoro as well as the length of the breaks. It is
+            recommented to start with shorter pomodoros if you aren't used to the pomodoro technique.
+         </p>
+         <h2>Pausing a pomodoro</h2>
+         <p>
+            The application allows you to pause pomodoros. Ideally this function should not be used at all. However,
+            there may come a time when you need to take a break early. If a pomodoro is paused, it may be resumed later
+            or it may be finished. If a pomodoro is finished then its progress is added to the daily progress and the
+            current pomodoro is reset.
          </p>
 
+         <h2>Logs and progress graph</h2>
          <p>
-            The progress is always visible in the top part of the application. Then, there are four tabs with different
-            functions. The timer tab is used to start, pause and end pomodoros. Manager tab can be used to remove or add
-            progress, for instance when you forgot to start the pomodoro. The settings tab is used to specify the number
-            of pomodoros and their length. Finally, the Logs tab contains a table of all actions since the last page
-            load. There is also a graph which shows how the progress changes in time.
+            The Logs tab contains a table of actions (usually taken by the user), the time of the action and progress at
+            that time. The table is also visualized in a progress graph, which shows the daily progress changing with
+            time.
          </p>
 
-      </div>
+         <h2>Progress manager</h2>
+         <p>
+            The manager tab can be used to add or remove time from the daily progress. This feature is meant to be used
+            when you either start working and forget to start a pomodoro or when you stop working but forget to pause
+            the pomodoro. You can use the Logs tab to estime the time which should be added or removed from the daily
+            progress to keep the daily progress accurate.
+         </p>
+
+         <h2>Closing the application</h2>
+         When the application is closed, it stores the current progress and logs to local storage. When the application
+         is re-opened, it will start with that progress and logs. However, this stored progress expires if the
+         application is not opened in the next 8 hours. This is so that the progress is reset on the next day.
+      </article>
    </div>
 
 

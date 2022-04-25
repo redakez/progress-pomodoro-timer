@@ -2,6 +2,7 @@ export let StateEnum = { OFF: 0, RUNNING: 1, PAUSED: 2, FINISHED: 3, DONE: 4 }
 
 export let LoggingEvents = {
    AppLoad: "AppLoad",
+   RecordsClear: "RecClear",
    TimerStart: "TStart",
    TimerFinish: "TFinish",
    TimerPause: "TPause",
@@ -29,19 +30,12 @@ function getNumberZeroPadded(number, amount) {
    return String(number).padStart(amount, '0');
 }
 
-export function getTimeFormatted_adaptive(timeMs) {
+export function getTimeFormatted_M_H_adaptive(timeMs) {
    let theTime = new Date(Number(timeMs));
-   let hours = Math.floor(timeMs / (1000 * 60 * 60));
-   let minutes = theTime.getMinutes();
+   let minutes = Math.floor(timeMs / (1000 * 60));
    let seconds = theTime.getSeconds();
-   let milliSeconds = theTime.getMilliseconds();
 
-   let ret = "";
-   if (hours != 0) {
-      ret += getNumberZeroPadded(hours, 2) + ":";
-   }
-   ret += getNumberZeroPadded(minutes, 2) + ":" + getNumberZeroPadded(seconds, 2) + "." + getNumberZeroPadded(milliSeconds, 3);
-   return ret;
+   return getNumberZeroPadded(minutes, 2) + ":" + getNumberZeroPadded(seconds, 2);
 }
 
 export function getTimeFormatted_M_H(timeMs) {

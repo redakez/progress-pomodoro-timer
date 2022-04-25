@@ -1,11 +1,11 @@
-import { StateEnum, getTimeFormatted_adaptive, LoggingEvents } from "./utils.js";
+import { StateEnum, getTimeFormatted_M_H_adaptive, LoggingEvents } from "./utils.js";
 import { Timer } from "./timer.js";
 import { Manager } from "./manager.js";
 import { Settings } from "./settings.js";
 import { Logs } from "./logs.js";
 
 /*
-The PomodoroTimer class uses 4 others classes, which are linked together with the PomodoroTimer class
+The PomodoroTimer class uses 4 others classes, which are linked together with the PomodoroTimer class.
 Here is a diagram:
 
              +-----------------------+
@@ -18,11 +18,15 @@ Here is a diagram:
 +-------+    +---------+  +----------+    +------+
 | Timer |    | Manager |  | Settings |    | Logs |
 +-------+    +---------+  +----------+    +------+
+All classes are instanced only once and each class is in its own file.
 */
 export class PomodoroTimer {
 
    constructor(mainDivEl) {
       this._mainDivEl = mainDivEl;
+   }
+
+   init() {
       this._mainDivEl.innerHTML = ""; //Remove the loading label
 
       //Local storage first init
@@ -33,12 +37,15 @@ export class PomodoroTimer {
          localStorage.pomodoroLen = 30 * 1000 * 60; //30 minutes
          localStorage.lastProgressUpdate = Date.now();
          localStorage.notifOn = 0;
+         localStorage.pausedProgress = 0;
       }
 
       //Removing old progress if a certain amount of time passed
       if (Date.now() - localStorage.lastProgressUpdate > 1000 * 60 * 60 * 8) { //8 hours
          localStorage.lastProgressUpdate = Date.now();
          localStorage.curProgress = 0;
+         localStorage.pausedProgress = 0;
+         localStorage.records = null;
       }
 
       //Init sub-classes
@@ -52,12 +59,18 @@ export class PomodoroTimer {
       this.initPomoroProgressInterface();
       this.initTabsInterface();
 
-      // Compute additional parameters from localstorage
+      // Set the application state based on data in localStorage
       let tmpProgress = localStorage.curProgress;
       localStorage.curProgress = 0;
       this.addProgressTime(tmpProgress);
       let maxVal = localStorage.pomodoroLen * localStorage.pomodoroCount;
       this._lastPomodoro = localStorage.curProgress > (maxVal - localStorage.pomodoroLen);
+      if (localStorage.pausedProgress > 0) {
+         this._Timer._startTime = 0;
+         this._Timer._pauseTime = Number(localStorage.pausedProgress);
+         this._state = StateEnum.PAUSED;
+      }
+      this._Logs.loadFromLocalStorage();
 
       //Initialize rest of the UI
       this._Timer.initInterface(this._tabDivs[0]);
@@ -75,12 +88,18 @@ export class PomodoroTimer {
 
       //Event listener for window close
       window.addEventListener("beforeunload", (e) => {
-         this.addProgressTime(this._Timer.getCurTimerTime());
+         this._Logs.saveToLocalStorage();
+         if (this._state == StateEnum.PAUSED || this._state == StateEnum.RUNNING) {
+            localStorage.pausedProgress = this._Timer.getCurTimerTime();
+         } else if (this._state == StateEnum.FINISHED) {
+            this.addProgressTime(localStorage.pomodoroLen);
+         } else {
+            localStorage.pausedProgress = 0;
+         }
       });
 
       //Log succesful load
       this.logEvent(LoggingEvents.AppLoad);
-      //this.createDummyEvents();
    }
 
    //Interface initialization
@@ -167,7 +186,7 @@ export class PomodoroTimer {
       let curPomodoro = Math.floor(localStorage.curProgress / localStorage.pomodoroLen);
       let extraTime = localStorage.curProgress % localStorage.pomodoroLen;
       this._pomodoroLabel.innerText = "Pomodoro: " + curPomodoro + " / " + localStorage.pomodoroCount;
-      this._extraTimeLabelEl.innerText = "Extra time: " + getTimeFormatted_adaptive(extraTime);
+      this._extraTimeLabelEl.innerText = "Extra time: " + getTimeFormatted_M_H_adaptive(extraTime);
       this._pomodoroMeterEl.value = localStorage.curProgress;
       this._pomodoroMeterEl.max = localStorage.pomodoroCount * localStorage.pomodoroLen;
    }
@@ -209,15 +228,6 @@ export class PomodoroTimer {
 
    logEvent(event) {
       this._Logs.addRecord(Date.now(), event, Number(localStorage.curProgress) + Number(this._Timer.getCurTimerTime()));
-   }
-
-   createDummyEvents() { //For debugging
-      this._Logs.addRecord(Date.now(), LoggingEvents.AppLoad, 0);
-      this._Logs.addRecord(Date.now() + 30 * 1000, LoggingEvents.AddTime, 20000);
-      this._Logs.addRecord(Date.now() + 40 * 1000, LoggingEvents.TimerStart, 20000);
-      this._Logs.addRecord(Date.now() + 131 * 1000, LoggingEvents.TimerPause, 201211);
-      this._Logs.addRecord(Date.now() + 162 * 1000, LoggingEvents.TimerResume, 201211);
-      this._Logs.addRecord(Date.now() + 284 * 1000, LoggingEvents.TimerFinish, 681281);
    }
 
 }

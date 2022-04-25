@@ -16,17 +16,15 @@ body {
    background-color: var(--main-background-color);
 }
 
-label, a, p, h1, h2 {
+* {
    color: var(--text-color);
    font-size: 16px;
    font-family: serif, 'Times New Roman', Times;
 }
 
 h1 {
-   color: var(--text-color);
    font-size: 19px;
    line-height: 2;
-   font-family: serif, 'Times New Roman', Times;
 }
 
 .the-title {
@@ -85,13 +83,15 @@ input[type=text] {
    margin-left: 10px;
    width: 50px;
    border: none;
-   line-height: 2;
+   line-height: 1;
+   color: black;
 }
 
 .cent-div {
    display: flex;
    justify-content: center;
-   padding-bottom: 10px;
+   align-self: center;
+   padding-bottom: 14px;
    width: 260px;
    margin: 0 auto;
 }

@@ -13,6 +13,7 @@ export class Manager {
       let minuteLabelEl = document.createElement("label");
       minuteLabelEl.textContent = "Time (min):";
       this._minuteInputEL = document.createElement("input");
+      this._minuteInputEL.setAttribute("placeholder", "10");
       this._minuteInputEL.type = "text";
       timeDivEl.appendChild(minuteLabelEl);
       timeDivEl.appendChild(this._minuteInputEL);

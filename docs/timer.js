@@ -1,4 +1,4 @@
-import { StateEnum, getTimeFormatted_adaptive, LoggingEvents, iconBase64 } from "./utils.js";
+import { StateEnum, getTimeFormatted_M_H_adaptive, LoggingEvents, iconBase64 } from "./utils.js";
 
 export class Timer {
 
@@ -34,25 +34,22 @@ export class Timer {
       let buttonDiv = document.createElement("div");
       buttonDiv.classList.add("cent-div");
 
-      this._startButtonEl = this.getButton("Start", false, (e) => this.startButtonAction());
+      this._startButtonEl = this.getButton("Start", (e) => this.startButtonAction());
       buttonDiv.appendChild(this._startButtonEl);
-      this._pauseButtonEl = this.getButton("Pause", true, (e) => this.pauseButtonAction());
+      this._pauseButtonEl = this.getButton("Pause", (e) => this.pauseButtonAction());
       buttonDiv.appendChild(this._pauseButtonEl);
-      this._resumeButtonEl = this.getButton("Resume", true, (e) => this.resumeButtonAction());
+      this._resumeButtonEl = this.getButton("Resume", (e) => this.resumeButtonAction());
       buttonDiv.appendChild(this._resumeButtonEl);
-      this._finishButtonEl = this.getButton("Finish", true, (e) => this.finishButtonAction());
+      this._finishButtonEl = this.getButton("Finish", (e) => this.finishButtonAction());
       buttonDiv.appendChild(this._finishButtonEl);
 
       timerDivEl.appendChild(buttonDiv);
    }
 
-   getButton(name, hidden, action) {
+   getButton(name, action) {
       let ret = document.createElement("button");
       ret.textContent = name;
       ret.addEventListener("click", action);
-      if (hidden) {
-         ret.style.display = "none";
-      }
       return ret;
    }
 
@@ -88,7 +85,7 @@ export class Timer {
       } else {
          timeMax = localStorage.pomodoroLen;
       }
-      this._timeLabelEl.innerText = getTimeFormatted_adaptive(Math.min(timeMs, timeMax)) + " / " + getTimeFormatted_adaptive(timeMax);
+      this._timeLabelEl.innerText = getTimeFormatted_M_H_adaptive(Math.min(timeMs, timeMax)) + " / " + getTimeFormatted_M_H_adaptive(timeMax);
       this._timerMeterEl.value = timeMs;
       if (this.PT._state == StateEnum.DONE) {
          this._timerMeterEl.max = 1;
