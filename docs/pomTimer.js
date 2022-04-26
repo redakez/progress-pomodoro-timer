@@ -45,7 +45,7 @@ export class PomodoroTimer {
          localStorage.lastProgressUpdate = Date.now();
          localStorage.curProgress = 0;
          localStorage.pausedProgress = 0;
-         localStorage.records = null;
+         localStorage.removeItem("records");
       }
 
       //Init sub-classes
