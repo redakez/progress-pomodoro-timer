@@ -41,7 +41,7 @@ export class PomodoroTimer {
       }
 
       //Removing old progress if a certain amount of time passed
-      if (Date.now() - localStorage.lastProgressUpdate > 1000 * 60 * 60 * 8) { //8 hours
+      if (Date.now() - localStorage.lastProgressUpdate > 1000 * 60 * 60 * 12) { //12 hours
          localStorage.curProgress = 0;
          localStorage.pausedProgress = 0;
          localStorage.removeItem("records");
