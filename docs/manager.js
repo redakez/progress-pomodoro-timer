@@ -36,7 +36,7 @@ export class Manager {
    }
 
    addButtonAction() {
-      let val = readIntFromLabel(this._minuteInputEL);
+      const val = readIntFromLabel(this._minuteInputEL);
       if (val != null) {
          this.PT.addProgressTime(val * 1000 * 60);
          this.PT.fullInterfaceUpdate();
@@ -45,7 +45,7 @@ export class Manager {
    }
 
    removeButtonAction() {
-      let val = readIntFromLabel(this._minuteInputEL);
+      const val = readIntFromLabel(this._minuteInputEL);
       if (val != null) {
          this.PT.removeProgressTime(val * 1000 * 60);
          this.PT.fullInterfaceUpdate();

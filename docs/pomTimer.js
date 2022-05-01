@@ -35,18 +35,18 @@ export class PomodoroTimer {
          localStorage.curProgress = 0;
          localStorage.pomodoroCount = 8;
          localStorage.pomodoroLen = 30 * 1000 * 60; //30 minutes
-         localStorage.lastProgressUpdate = Date.now();
          localStorage.notifOn = 0;
+         localStorage.notesOn = 0;
          localStorage.pausedProgress = 0;
       }
 
       //Removing old progress if a certain amount of time passed
       if (Date.now() - localStorage.lastProgressUpdate > 1000 * 60 * 60 * 8) { //8 hours
-         localStorage.lastProgressUpdate = Date.now();
          localStorage.curProgress = 0;
          localStorage.pausedProgress = 0;
          localStorage.removeItem("records");
       }
+      localStorage.lastProgressUpdate = Date.now();
 
       //Init sub-classes
       this._state = StateEnum.OFF;
@@ -88,6 +88,7 @@ export class PomodoroTimer {
 
       //Event listener for window close
       window.addEventListener("beforeunload", (e) => {
+         localStorage.notes = this._notes.value;
          this._Logs.saveToLocalStorage();
          if (this._state == StateEnum.PAUSED || this._state == StateEnum.RUNNING) {
             localStorage.pausedProgress = this._Timer.getCurTimerTime();
@@ -121,13 +122,25 @@ export class PomodoroTimer {
       this._pomodoroMeterEl = document.createElement("meter");
       pomodoroProgressDiv.appendChild(this._pomodoroMeterEl);
       this._mainDivEl.appendChild(pomodoroProgressDiv);
+
+      //Notes (div + textarea)
+      this._notesDiv = document.createElement("div");
+      this._notesDiv.classList.add("cent-div");
+      this._notes = document.createElement("textarea");
+      this._notes.setAttribute("rows", 7);
+      this._notes.setAttribute("placeholder", "Write your notes here");
+      this._notes.innerHTML = localStorage.notes ?? "";
+      this._notesDiv.appendChild(this._notes);
+      this._mainDivEl.appendChild(this._notesDiv);
+
+
    }
 
    initTabsInterface() {
       let tabNavDiv = document.createElement("div");
       tabNavDiv.id = "tabs-nav-div";
       tabNavDiv.innerHTML = "";
-      let tabNames = ["Timer", "Manager", "Settings", "Logs"];
+      const tabNames = ["Timer", "Manager", "Settings", "Logs"];
       let radios = [];
 
       //Creating the radio input
@@ -178,17 +191,23 @@ export class PomodoroTimer {
 
    fullInterfaceUpdate() {
       this.updatePomodoroProgress();
+      this.notesShowUpdate();
       this._Timer.updateTimerAction();
       this._Timer.updateButtonsVisibility();
    }
 
    updatePomodoroProgress() {
-      let curPomodoro = Math.floor(localStorage.curProgress / localStorage.pomodoroLen);
-      let extraTime = localStorage.curProgress % localStorage.pomodoroLen;
+      const curPomodoro = Math.floor(localStorage.curProgress / localStorage.pomodoroLen);
+      const extraTime = localStorage.curProgress % localStorage.pomodoroLen;
       this._pomodoroLabel.innerText = "Pomodoro: " + curPomodoro + " / " + localStorage.pomodoroCount;
       this._extraTimeLabelEl.innerText = "Extra time: " + getTimeFormatted_M_H_adaptive(extraTime);
       this._pomodoroMeterEl.value = localStorage.curProgress;
       this._pomodoroMeterEl.max = localStorage.pomodoroCount * localStorage.pomodoroLen;
+   }
+
+   notesShowUpdate() {
+      console.log("Updating to: ");
+      this._notesDiv.style.display = localStorage.notesOn == 1 ? "flex" : "none";
    }
 
    //Progress arithmetic
@@ -196,7 +215,7 @@ export class PomodoroTimer {
    addProgressTime(amount) {
       if (amount <= 0) return;
       localStorage.curProgress = Number(localStorage.curProgress) + Number(amount);
-      let maxVal = localStorage.pomodoroCount * localStorage.pomodoroLen;
+      const maxVal = localStorage.pomodoroCount * localStorage.pomodoroLen;
       if (localStorage.curProgress >= maxVal) {
          this._state = StateEnum.DONE;
          localStorage.curProgress = maxVal;
@@ -218,7 +237,7 @@ export class PomodoroTimer {
       if (this._state == StateEnum.DONE) {
          this._state = StateEnum.OFF;
       }
-      let maxVal = localStorage.pomodoroCount * localStorage.pomodoroLen;
+      const maxVal = localStorage.pomodoroCount * localStorage.pomodoroLen;
       if (localStorage.curProgress < maxVal - localStorage.pomodoroLen) {
          this._lastPomodoro = false;
       }

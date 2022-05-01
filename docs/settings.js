@@ -59,7 +59,7 @@ export class Settings {
       this._checkboxEl.type = "checkbox";
       this._checkboxEl.id = "notifCheckbox";
       this._checkboxEl.checked = localStorage.notifOn == 1;
-      this._checkboxEl.addEventListener("click", (e) => this.checkboxAction(e), false);
+      this._checkboxEl.addEventListener("click", (e) => this.notifCheckboxAction(e), false);
       checkboxDivEL.appendChild(this._checkboxEl);
 
       let labelEL = document.createElement("label");
@@ -68,20 +68,43 @@ export class Settings {
       checkboxDivEL.appendChild(labelEL);
 
       managerDivEl.appendChild(checkboxDivEL);
+
+
+
+      //Notes tickbox
+      let notesCheckDivEL = document.createElement("div");
+      notesCheckDivEL.classList.add("cent-div")
+
+      this._notesCheckboxEl = document.createElement("input");
+      this._notesCheckboxEl.type = "checkbox";
+      this._notesCheckboxEl.id = "notesCheckbox";
+      this._notesCheckboxEl.checked = localStorage.notesOn == 1;
+      this._notesCheckboxEl.addEventListener("click", (e) => {
+         localStorage.notesOn = this._notesCheckboxEl.checked ? 1 : 0;
+         this.PT.notesShowUpdate();
+      });
+      notesCheckDivEL.appendChild(this._notesCheckboxEl);
+
+      let notesLabelEl = document.createElement("label");
+      notesLabelEl.textContent = "Notes text area";
+      notesLabelEl.setAttribute("for", "notesCheckbox");
+      notesCheckDivEL.appendChild(notesLabelEl);
+
+      managerDivEl.appendChild(notesCheckDivEL);
    }
 
    applySettings() {
       //Try to read the label info
-      let newPomodorCount = readIntFromLabel(this._pomCountInputEl);
+      const newPomodorCount = readIntFromLabel(this._pomCountInputEl);
       if (newPomodorCount == null) {
          return;
       }
-      let newPomodorLen = readIntFromLabel(this._pomLenInputEl);
+      const newPomodorLen = readIntFromLabel(this._pomLenInputEl);
       if (newPomodorLen == null) {
          return;
       }
       //If the format is correct, apply the settings
-      let progressSave = localStorage.curProgress;
+      const progressSave = localStorage.curProgress;
       this.PT.removeProgressTime(progressSave);
       localStorage.pomodoroCount = newPomodorCount;
       localStorage.pomodoroLen = newPomodorLen * 1000 * 60;
@@ -90,7 +113,7 @@ export class Settings {
       this.PT.logEvent(LoggingEvents.SettingsChanged);
    }
 
-   checkboxAction(e) {
+   notifCheckboxAction(e) {
       if (Notification.permission == "granted") {
          localStorage.notifOn = this._checkboxEl.checked ? 1 : 0;
          return;

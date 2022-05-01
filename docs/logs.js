@@ -50,7 +50,7 @@ export class Logs {
    }
 
    clearRecordsAction() {
-      let res = confirm("Are you sure you want to clear today's records?")
+      const res = confirm("Are you sure you want to clear today's records?")
       if (res) {
          this._records = [];
          this.PT.logEvent(LoggingEvents.RecordsClear);
@@ -60,7 +60,7 @@ export class Logs {
    saveRecordsToFileAction() {
       let fileContent = [];
       fileContent.push("Timestamp,Action,Progress [ms]\n");
-      for (let record of this._records) {
+      for (const record of this._records) {
          fileContent.push(record.time + "," + record.event + "," + record.progress + "\n");
       }
       let file = new Blob([fileContent.join("")], { type: "text/csv" });
@@ -98,7 +98,7 @@ export class Logs {
 
    updateTable() {
       let finalInnerHtml = "<thead><tr><th>Time</th><th>Action</th><th>Progress</th></tr></thead><tbody>";
-      for (let record of this._records) {
+      for (const record of this._records) {
          finalInnerHtml += "<tr><td>" + getTimeFormatted_S_H(record.time) +
             "</td><td>" + record.event +
             "</td><td>" + getTimeFormatted_M_H_adaptive(record.progress) + "</td></tr>";
@@ -108,20 +108,20 @@ export class Logs {
    }
 
    updateGraph() {
-      let timeShift = this._records[0].time;
-      let maxTime = this._records[this._records.length - 1].time - timeShift;
-      let maxVal = Number(localStorage.getItem("pomodoroLen")) * Number(localStorage.getItem("pomodoroCount"));
+      const timeShift = this._records[0].time;
+      const maxTime = this._records[this._records.length - 1].time - timeShift;
+      const maxVal = Number(localStorage.getItem("pomodoroLen")) * Number(localStorage.getItem("pomodoroCount"));
       this._svgGraph.innerHTML = "";
 
-      let fullOffset = this._mainOffset + this._sideOffset;
+      const fullOffset = this._mainOffset + this._sideOffset;
 
       //Main progress path
       if (this._records.length > 1) {
          let fullPath = "M";
          for (let i = 0; i < this._records.length; i++) {
-            let thisRec = this._records[i];
-            let actualX = (((thisRec.time - timeShift) / maxTime) * (this._svgGraphXSize - fullOffset)) + this._mainOffset;
-            let actualY = - ((thisRec.progress / maxVal) * (this._svgGraphYSize - fullOffset)) + (this._svgGraphYSize - this._mainOffset);
+            const thisRec = this._records[i];
+            const actualX = (((thisRec.time - timeShift) / maxTime) * (this._svgGraphXSize - fullOffset)) + this._mainOffset;
+            const actualY = - ((thisRec.progress / maxVal) * (this._svgGraphYSize - fullOffset)) + (this._svgGraphYSize - this._mainOffset);
             fullPath += actualX + " " + actualY + " L ";
          }
          fullPath = fullPath.substring(0, fullPath.length - 2);
@@ -136,9 +136,9 @@ export class Logs {
             y2="${this._svgGraphYSize - this._mainOffset}" stroke="white" stroke-width="2" />`; //Vertical line (no tick)
 
       //X axis text + ticks
-      let minXVal = this._mainOffset;
-      let maxXVal = this._svgGraphXSize - this._sideOffset;
-      let numberOfTimeTicks = 4;
+      const minXVal = this._mainOffset;
+      const maxXVal = this._svgGraphXSize - this._sideOffset;
+      const numberOfTimeTicks = 4;
       for (let xVal = minXVal; xVal <= maxXVal; xVal += (maxXVal - this._mainOffset) / numberOfTimeTicks) {
          //Tick
          this._svgGraph.innerHTML += `<line x1="${xVal}" y1="${this._svgGraphYSize - this._mainOffset}

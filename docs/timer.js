@@ -101,7 +101,7 @@ export class Timer {
             this.updateTimerToTime(0);
             break;
          case StateEnum.RUNNING:
-            let curTimeMs = Date.now() - this._startTime;
+            const curTimeMs = Date.now() - this._startTime;
             if ((!this.PT._lastPomodoro && curTimeMs > localStorage.pomodoroLen)
                ||
                (this.PT._lastPomodoro && curTimeMs + Number(localStorage.curProgress) > localStorage.pomodoroCount * localStorage.pomodoroLen)) {
@@ -135,7 +135,7 @@ export class Timer {
    }
 
    updateButtonsVisibilityTo(startVal, pauseVal, resumeVal, finishVal) {
-      let displVal = "inline-block";
+      const displVal = "inline-block";
       this._startButtonEl.style.display = startVal ? displVal : "none";
       this._pauseButtonEl.style.display = pauseVal ? displVal : "none";
       this._resumeButtonEl.style.display = resumeVal ? displVal : "none";
@@ -185,9 +185,9 @@ export class Timer {
    }
 
    finishButtonAction() {
-      let curState = this.PT._state;
+      const savedState = this.PT._state;
       this.PT._state = StateEnum.OFF;
-      if (curState == StateEnum.FINISHED) {
+      if (savedState == StateEnum.FINISHED) {
          this.PT.addProgressTime(localStorage.pomodoroLen);
          this._alarm.pause();
          this._alarm.currentTime = 0;
