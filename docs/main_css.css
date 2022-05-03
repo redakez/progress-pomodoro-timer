@@ -197,12 +197,14 @@ input[type=radio] {
    display: none;
 }
 
-div#tabs-nav-div {
+menu#tabs-nav-div {
+   padding: 0;
+   margin: 0;
    display: flex;
    padding-top: 10px;
 }
 
-div.tabbed-div {
+section.tabbed-div {
    background-color: var(--tabbed-background-color);
    padding-top: 20px;
    padding-bottom: 20px;
@@ -241,9 +243,9 @@ label.tab-label:not(:last-child) {
    display: block;
 }
 
-#radio-Timer:checked ~ div#tabs-nav-div > label:nth-child(1),
-#radio-Manager:checked ~ div#tabs-nav-div > label:nth-child(2),
-#radio-Settings:checked ~ div#tabs-nav-div > label:nth-child(3),
-#radio-Logs:checked ~ div#tabs-nav-div > label:nth-child(4) {
+#radio-Timer:checked ~ menu#tabs-nav-div > label:nth-child(1),
+#radio-Manager:checked ~ menu#tabs-nav-div > label:nth-child(2),
+#radio-Settings:checked ~ menu#tabs-nav-div > label:nth-child(3),
+#radio-Logs:checked ~ menu#tabs-nav-div > label:nth-child(4) {
    background-color: var(--tabbed-background-color);
 }

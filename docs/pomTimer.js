@@ -137,7 +137,7 @@ export class PomodoroTimer {
    }
 
    initTabsInterface() {
-      let tabNavDiv = document.createElement("div");
+      let tabNavDiv = document.createElement("menu");
       tabNavDiv.id = "tabs-nav-div";
       tabNavDiv.innerHTML = "";
       const tabNames = ["Timer", "Manager", "Settings", "Logs"];
@@ -179,7 +179,7 @@ export class PomodoroTimer {
       this._mainDivEl.appendChild(tabNavDiv);
       this._tabDivs = [];
       for (const sub of tabNames) {
-         let tabDiv = document.createElement("div");
+         let tabDiv = document.createElement("section");
          tabDiv.id = "tab-div-" + sub;
          this._mainDivEl.appendChild(tabDiv);
          tabDiv.classList.add("tabbed-div");
