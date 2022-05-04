@@ -1,4 +1,4 @@
-import { readIntFromLabel, LoggingEvents } from "./utils.js";
+import { getCenteredButtonArray, getCenteredInputTextWithLabel, getCenteredCheckboxWithLabel, readIntFromLabel, LoggingEvents } from "./utils.js";
 
 export class Settings {
 
@@ -8,89 +8,33 @@ export class Settings {
       this.PT = pomTimer;
    }
 
-   initInterface(managerDivEl) {
+   initInterface(settingsDivEl) {
       //Pomodoro count input
-      let pomCountDivEl = document.createElement("div");
-      pomCountDivEl.classList.add("cent-div")
-
-      let pomCountLabelEl = document.createElement("label");
-      pomCountLabelEl.textContent = "Pomodoro count:";
-      this._pomCountInputEl = document.createElement("input");
-      this._pomCountInputEl.setAttribute("placeholder", "8");
-      this._pomCountInputEl.type = "text";
-      pomCountDivEl.appendChild(pomCountLabelEl);
-      pomCountDivEl.appendChild(this._pomCountInputEl);
-
-      managerDivEl.appendChild(pomCountDivEl);
-
-      //Pomodoro length input
-      let pomLenDivEl = document.createElement("div");
-      pomLenDivEl.classList.add("cent-div")
-
-      let pomLenLabelEl = document.createElement("label");
-      pomLenLabelEl.textContent = "Pomodoro length (min):";
-      this._pomLenInputEl = document.createElement("input");
-      this._pomLenInputEl.setAttribute("placeholder", "30");
-      this._pomLenInputEl.type = "text";
-      pomLenDivEl.appendChild(pomLenLabelEl);
-      pomLenDivEl.appendChild(this._pomLenInputEl);
-
-      managerDivEl.appendChild(pomLenDivEl);
+      getCenteredInputTextWithLabel
+      this._pomCountInputEl = getCenteredInputTextWithLabel(settingsDivEl, 8, "Pomodoro count:");
+      this._pomLenInputEl = getCenteredInputTextWithLabel(settingsDivEl, 30, "Pomodoro length (min):");
 
       //Confirm button
-      let buttonDivEL = document.createElement("div");
-      buttonDivEL.classList.add("cent-div")
-
-      let confirmButtonEl = document.createElement("button");
-      confirmButtonEl.textContent = "Apply";
-      confirmButtonEl.addEventListener("click", e => this.applySettings());
-      buttonDivEL.appendChild(confirmButtonEl);
-
-      managerDivEl.appendChild(buttonDivEL);
+      let buttons = getCenteredButtonArray(settingsDivEl, ["Apply"]);
+      buttons[0].addEventListener("click", () => this.applySettings());
 
       //Break
-      managerDivEl.appendChild(document.createElement("br"));
+      settingsDivEl.appendChild(document.createElement("br"));
 
-      //Notifications tickbox
-      let checkboxDivEL = document.createElement("div");
-      checkboxDivEL.classList.add("cent-div")
+      //Notifications checkbox
+      this._checkboxEl = getCenteredCheckboxWithLabel(settingsDivEl, "notif", localStorage.notifOn == 1, "Desktop notifications");
+      this._checkboxEl.addEventListener("click", (e) => this.checkBoxAction(e, "notifOn", this._checkboxEl), false);
 
-      this._checkboxEl = document.createElement("input");
-      this._checkboxEl.type = "checkbox";
-      this._checkboxEl.id = "notifCheckbox";
-      this._checkboxEl.checked = localStorage.notifOn == 1;
-      this._checkboxEl.addEventListener("click", (e) => this.notifCheckboxAction(e), false);
-      checkboxDivEL.appendChild(this._checkboxEl);
+      //Eye rest checkbox
+      this._eyeCheckboxEl = getCenteredCheckboxWithLabel(settingsDivEl, "eye", localStorage.eyeNotifOn == 1, "Eye rest notifications");
+      this._eyeCheckboxEl.addEventListener("click", (e) => this.checkBoxAction(e, "eyeNotifOn", this._eyeCheckboxEl), false);
 
-      let labelEL = document.createElement("label");
-      labelEL.textContent = "Desktop notifications";
-      labelEL.setAttribute("for", "notifCheckbox");
-      checkboxDivEL.appendChild(labelEL);
-
-      managerDivEl.appendChild(checkboxDivEL);
-
-
-
-      //Notes tickbox
-      let notesCheckDivEL = document.createElement("div");
-      notesCheckDivEL.classList.add("cent-div")
-
-      this._notesCheckboxEl = document.createElement("input");
-      this._notesCheckboxEl.type = "checkbox";
-      this._notesCheckboxEl.id = "notesCheckbox";
-      this._notesCheckboxEl.checked = localStorage.notesOn == 1;
+      //Notes checkbox
+      this._notesCheckboxEl = getCenteredCheckboxWithLabel(settingsDivEl, "notes", localStorage.notesOn == 1, "Notes text area");
       this._notesCheckboxEl.addEventListener("click", (e) => {
          localStorage.notesOn = this._notesCheckboxEl.checked ? 1 : 0;
          this.PT.notesShowUpdate();
       });
-      notesCheckDivEL.appendChild(this._notesCheckboxEl);
-
-      let notesLabelEl = document.createElement("label");
-      notesLabelEl.textContent = "Notes text area";
-      notesLabelEl.setAttribute("for", "notesCheckbox");
-      notesCheckDivEL.appendChild(notesLabelEl);
-
-      managerDivEl.appendChild(notesCheckDivEL);
    }
 
    applySettings() {
@@ -113,9 +57,10 @@ export class Settings {
       this.PT.logEvent(LoggingEvents.SettingsChanged);
    }
 
-   notifCheckboxAction(e) {
+   checkBoxAction(e, localStorageOptionName, checkboxEl) {
       if (Notification.permission == "granted") {
-         localStorage.notifOn = this._checkboxEl.checked ? 1 : 0;
+         let curVal = localStorage.getItem(localStorageOptionName);
+         localStorage.setItem(localStorageOptionName, curVal == 0 ? 1 : 0);
          return;
       }
       e.preventDefault();
@@ -126,13 +71,22 @@ export class Settings {
       } else if (Notification.permission == "denied") {
          alert("Desktop notificitaions have been previously disabled for this site and have to be re-enabled manually in your browser.");
       } else if (Notification.permission == "default") {
-         Notification.requestPermission().then(function (perm) {
+         Notification.requestPermission().then((perm) => {
             if (perm == "granted") {
-               localStorage.notifOn = 1;
-               this._checkboxEl.checked = true;
+               localStorage.setItem(localStorageOptionName, 1);
+               checkboxEl.checked = true;
+            } else {
+               this.disableAllDesktopNotifications();
             }
-         }.bind(this));
+         });
       }
+   }
+
+   disableAllDesktopNotifications() {
+      localStorage.notifOn = 0;
+      localStorage.eyeNotifOn = 0;
+      this._checkboxEl.checked = false;
+      this._eyeCheckboxEl.checked = false;
    }
 
 }

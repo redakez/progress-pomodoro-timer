@@ -36,7 +36,9 @@ export class PomodoroTimer {
          localStorage.pomodoroCount = 8;
          localStorage.pomodoroLen = 30 * 1000 * 60; //30 minutes
          localStorage.notifOn = 0;
+         localStorage.eyeNotifOn = 0;
          localStorage.notesOn = 0;
+         localStorage.notes = "";
          localStorage.pausedProgress = 0;
       }
 
@@ -129,11 +131,9 @@ export class PomodoroTimer {
       this._notes = document.createElement("textarea");
       this._notes.setAttribute("rows", 7);
       this._notes.setAttribute("placeholder", "Write your notes here");
-      this._notes.innerHTML = localStorage.notes ?? "";
+      this._notes.innerHTML = localStorage.notes;
       this._notesDiv.appendChild(this._notes);
       this._mainDivEl.appendChild(this._notesDiv);
-
-
    }
 
    initTabsInterface() {
@@ -206,7 +206,6 @@ export class PomodoroTimer {
    }
 
    notesShowUpdate() {
-      console.log("Updating to: ");
       this._notesDiv.style.display = localStorage.notesOn == 1 ? "flex" : "none";
    }
 

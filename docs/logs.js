@@ -1,4 +1,4 @@
-import { LoggingEvents, getTimeFormatted_S_H, getTimeFormatted_M_H_adaptive, getTimeFormatted_M_H } from "./utils.js";
+import { getCenteredButtonArray, LoggingEvents, getTimeFormatted_S_H, getTimeFormatted_M_H_adaptive, getTimeFormatted_M_H } from "./utils.js";
 
 export class Logs {
 
@@ -14,19 +14,9 @@ export class Logs {
       tableDivEl.classList.add("table-div");
 
       // Buttons (Clear records + save records)
-      let btnsDivEl = document.createElement("div");
-      btnsDivEl.classList.add("cent-div")
-
-      let clearButtonEl = document.createElement("button");
-      clearButtonEl.textContent = "Clear";
-      clearButtonEl.addEventListener("click", this.clearRecordsAction.bind(this));
-      let saveButtonEl = document.createElement("button");
-      saveButtonEl.textContent = "Save";
-      saveButtonEl.addEventListener("click", this.saveRecordsToFileAction.bind(this));
-      btnsDivEl.appendChild(clearButtonEl);
-      btnsDivEl.appendChild(saveButtonEl);
-
-      logsDivEl.appendChild(btnsDivEl);
+      let buttons = getCenteredButtonArray(logsDivEl, ["Clear", "Save"]);
+      buttons[0].addEventListener("click", this.clearRecordsAction.bind(this));
+      buttons[1].addEventListener("click", this.saveRecordsToFileAction.bind(this));
 
       //SVG graph
       this._svgGraph = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -47,6 +37,23 @@ export class Logs {
 
       tableDivEl.appendChild(this._table);
       logsDivEl.appendChild(tableDivEl);
+   }
+
+   //Record management
+
+   addRecord(time, type, progress) {
+      this._records.push({ time: time, event: type, progress: progress });
+      this.localUiUpdate();
+   }
+
+   loadFromLocalStorage() {
+      if (localStorage.records != null) {
+         this._records = JSON.parse(localStorage.records);
+      }
+   }
+
+   saveToLocalStorage() {
+      localStorage.records = JSON.stringify(this._records);
    }
 
    clearRecordsAction() {
@@ -76,24 +83,11 @@ export class Logs {
       }, 0);
    }
 
-   loadFromLocalStorage() {
-      if (localStorage.records != null) {
-         this._records = JSON.parse(localStorage.records);
-      }
-   }
-
-   saveToLocalStorage() {
-      localStorage.records = JSON.stringify(this._records);
-   }
+   //Update functions
 
    localUiUpdate() {
       this.updateTable();
       this.updateGraph();
-   }
-
-   addRecord(time, type, progress) {
-      this._records.push({ time: time, event: type, progress: progress });
-      this.localUiUpdate();
    }
 
    updateTable() {

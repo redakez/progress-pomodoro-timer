@@ -1,4 +1,4 @@
-import { readIntFromLabel, LoggingEvents } from "./utils.js";
+import { getCenteredButtonArray, getCenteredInputTextWithLabel, readIntFromLabel, LoggingEvents } from "./utils.js";
 
 export class Manager {
 
@@ -10,29 +10,11 @@ export class Manager {
       let timeDivEl = document.createElement("div");
       timeDivEl.classList.add("cent-div")
 
-      let minuteLabelEl = document.createElement("label");
-      minuteLabelEl.textContent = "Time (min):";
-      this._minuteInputEL = document.createElement("input");
-      this._minuteInputEL.setAttribute("placeholder", "10");
-      this._minuteInputEL.type = "text";
-      timeDivEl.appendChild(minuteLabelEl);
-      timeDivEl.appendChild(this._minuteInputEL);
+      this._minuteInputEL = getCenteredInputTextWithLabel(managerDivEl, "10", "Time (min):");
 
-      managerDivEl.appendChild(timeDivEl);
-
-      let btnsDivEl = document.createElement("div");
-      btnsDivEl.classList.add("cent-div")
-
-      let addButtonEl = document.createElement("button");
-      addButtonEl.textContent = "Add";
-      addButtonEl.addEventListener("click", this.addButtonAction.bind(this));
-      let removeButtonEl = document.createElement("button");
-      removeButtonEl.textContent = "Remove";
-      removeButtonEl.addEventListener("click", this.removeButtonAction.bind(this));
-      btnsDivEl.appendChild(addButtonEl);
-      btnsDivEl.appendChild(removeButtonEl);
-
-      managerDivEl.appendChild(btnsDivEl);
+      let buttons = getCenteredButtonArray(managerDivEl, ["Add", "Remove"]);
+      buttons[0].addEventListener("click", this.addButtonAction.bind(this));
+      buttons[1].addEventListener("click", this.removeButtonAction.bind(this));
    }
 
    addButtonAction() {

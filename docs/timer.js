@@ -1,4 +1,4 @@
-import { StateEnum, getTimeFormatted_M_H_adaptive, LoggingEvents, iconBase64 } from "./utils.js";
+import { getCenteredButtonArray, StateEnum, getTimeFormatted_M_H_adaptive, LoggingEvents, iconBase64 } from "./utils.js";
 
 export class Timer {
 
@@ -6,10 +6,12 @@ export class Timer {
       this.PT = pomTimer;
 
       this._TIMER_UPDATE_INTERVAL = 1000;
+      this._EYE_REST_INTERVAL = 1000 * 60 * 20; //20 minutes
 
       this._startTime = Date.now();
       this._pauseTime = 0;
       this._timer = null;
+      this._eyeTimer = null;
       this._alarm = new Audio("alarm.mp3");
       this._alarm.loop = true;
    }
@@ -31,36 +33,27 @@ export class Timer {
       timerDivEl.appendChild(progressDiv);
 
       //Buttons
-      let buttonDiv = document.createElement("div");
-      buttonDiv.classList.add("cent-div");
-
-      this._startButtonEl = this.getButton("Start", (e) => this.startButtonAction());
-      buttonDiv.appendChild(this._startButtonEl);
-      this._pauseButtonEl = this.getButton("Pause", (e) => this.pauseButtonAction());
-      buttonDiv.appendChild(this._pauseButtonEl);
-      this._resumeButtonEl = this.getButton("Resume", (e) => this.resumeButtonAction());
-      buttonDiv.appendChild(this._resumeButtonEl);
-      this._finishButtonEl = this.getButton("Finish", (e) => this.finishButtonAction());
-      buttonDiv.appendChild(this._finishButtonEl);
-
-      timerDivEl.appendChild(buttonDiv);
-   }
-
-   getButton(name, action) {
-      let ret = document.createElement("button");
-      ret.textContent = name;
-      ret.addEventListener("click", action);
-      return ret;
+      let buttons = getCenteredButtonArray(timerDivEl, ["Start", "Pause", "Resume", "Finish"]);
+      this._startButtonEl = buttons[0];
+      this._pauseButtonEl = buttons[1];
+      this._resumeButtonEl = buttons[2];
+      this._finishButtonEl = buttons[3];
+      this._startButtonEl.addEventListener("click", () => this.startButtonAction());
+      this._pauseButtonEl.addEventListener("click", () => this.pauseButtonAction());
+      this._resumeButtonEl.addEventListener("click", () => this.resumeButtonAction());
+      this._finishButtonEl.addEventListener("click", () => this.finishButtonAction());
    }
 
    //Timer basics
 
    startTimer() {
       this._timer = setInterval(() => this.updateTimerAction(), this._TIMER_UPDATE_INTERVAL);
+      this._eyeTimer = setInterval(() => this.eyeRestNotification(), this._EYE_REST_INTERVAL);
    }
 
    stopTimer() {
       clearInterval(this._timer);
+      clearInterval(this._eyeTimer);
    }
 
    getCurTimerTime() {
@@ -155,6 +148,14 @@ export class Timer {
       } else if (Notification.permission == "granted" && localStorage.notifOn == 1) {
          let notif = new Notification("Pomodoro finished! Click here to confirm pomodoro end", { icon: iconBase64 });
          notif.onclick = () => this.finishButtonAction();
+      }
+   }
+
+   eyeRestNotification() {
+      if (!("Notification" in window)) {
+         return;
+      } else if (Notification.permission == "granted" && localStorage.eyeNotifOn == 1) {
+         let notif = new Notification("Look into distance for at least 20 seconds. Also blink a few times.", { icon: iconBase64 });
       }
    }
 
