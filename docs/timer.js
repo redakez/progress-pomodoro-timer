@@ -152,6 +152,9 @@ export class Timer {
    }
 
    eyeRestNotification() {
+      if (Math.abs(this.getCurTimerTime - this.PT.pomodoroLen) < 1000 * 10) {
+         return; //Do not show the notification if the pomodoro is about to end
+      }
       if (!("Notification" in window)) {
          return;
       } else if (Notification.permission == "granted" && localStorage.eyeNotifOn == 1) {
